@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Authentication.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +21,18 @@ namespace Authentication.Controllers
         public AuthController(IConfiguration configuration)
         {
             _configuration = configuration;
+        }
+
+
+        [HttpGet, Authorize]
+        public ActionResult<string> GetMe()
+        {
+            var userName = User?.Identity?.Name;
+
+            var userName2 = User.FindFirst(ClaimTypes.Name);
+            var userRole = User.FindFirst(ClaimTypes.Role);
+
+            return Ok(new {userName, userName2, userRole});
         }
 
         [HttpPost("register")]
