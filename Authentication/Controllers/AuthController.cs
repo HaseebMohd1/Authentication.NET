@@ -17,20 +17,26 @@ namespace Authentication.Controllers
         public static User user = new User();
 
         private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, IUserService userService)
         {
             _configuration = configuration;
+            _userService = userService;
         }
 
 
         [HttpGet, Authorize]
-        public ActionResult<string> GetMe()
+        public ActionResult<object> GetMe()
         {
+            var userNameNew = _userService.GetUserName();
+
+            return Ok(userNameNew);
+
             var userName = User?.Identity?.Name;
 
-            var userName2 = User.FindFirst(ClaimTypes.Name);
-            var userRole = User.FindFirst(ClaimTypes.Role);
+            var userName2 = User?.FindFirst(ClaimTypes.Name);
+            var userRole = User?.FindFirst(ClaimTypes.Role);
 
             return Ok(new {userName, userName2, userRole});
         }
